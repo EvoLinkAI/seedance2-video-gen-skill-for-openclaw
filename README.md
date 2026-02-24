@@ -27,7 +27,13 @@ Currently available:
 
 | Skill | Description | Model |
 |-------|-------------|-------|
-| **Seedance Video Gen** | Text-to-video and image-to-video with auto audio | Seedance 2.0 (ByteDance) |
+| **Seedance Video Gen** | Text-to-video and image-to-video with auto audio | Seedance 1.5 Pro → 2.0 (ByteDance) |
+
+📚 **Complete Guide**: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — Prompts, use cases, and capabilities showcase
+
+🚀 **Seedance 2.0 API Early Access**: [seedance2api.app](https://seedance2api.app/)
+
+**Note**: Currently using Seedance 1.5 Pro. When Seedance 2.0 launches, zero migration needed — it works automatically.
 
 More skills coming soon.
 
