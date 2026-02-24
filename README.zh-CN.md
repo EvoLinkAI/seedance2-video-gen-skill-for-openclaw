@@ -162,6 +162,14 @@ export EVOLINK_API_KEY=your_key_here
 
 ---
 
+## 从 ClawHub 下载
+
+你也可以直接从 ClawHub 安装此技能：
+
+👉 **[在 ClawHub 下载 →](https://clawhub.ai/kn74p4xy6sja0199cea53anecs81kqjs/seedance-2-video-gen)**
+
+---
+
 ## 许可证
 
 MIT

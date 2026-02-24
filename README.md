@@ -161,6 +161,14 @@ We're adding more EvoLink-powered skills. Stay tuned or [request a skill](https:
 
 ---
 
+## Download from ClawHub
+
+You can also install this skill directly from ClawHub:
+
+👉 **[Download on ClawHub →](https://clawhub.ai/kn74p4xy6sja0199cea53anecs81kqjs/seedance-2-video-gen)**
+
+---
+
 ## License
 
 MIT
