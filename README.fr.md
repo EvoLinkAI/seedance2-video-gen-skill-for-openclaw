@@ -1,4 +1,4 @@
-# Seedance 2 Video Gen Skill for OpenClaw
+# Seedance 2 Video Gen Skill pour OpenClaw
 
 <p align="center">
   <strong>Génération de vidéo IA et plus — installez en une commande, commencez à créer en secondes.</strong>

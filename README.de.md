@@ -1,4 +1,4 @@
-# Seedance 2 Video Gen Skill for OpenClaw
+# Seedance 2 Video Gen Skill für OpenClaw
 
 <p align="center">
   <strong>KI-Videoerzeugung und mehr — installieren mit einem Befehl, in Sekunden starten.</strong>

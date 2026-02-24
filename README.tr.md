@@ -1,4 +1,4 @@
-# Seedance 2 Video Gen Skill for OpenClaw
+# OpenClaw için Seedance 2 Video Gen Skill
 
 <p align="center">
   <strong>AI video oluşturma ve daha fazlası — bir komutla kurun, saniyeler içinde oluşturmaya başlayın.</strong>

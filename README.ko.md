@@ -1,4 +1,4 @@
-# Seedance 2 Video Gen Skill for OpenClaw
+# OpenClaw용 Seedance 2 Video Gen Skill
 
 <p align="center">
   <strong>AI 비디오 생성 등 — 한 번의 명령으로 설치, 수 초 만에 생성 시작.</strong>
