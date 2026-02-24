@@ -1,4 +1,4 @@
-# EvoLink Skills for OpenClaw
+# Seedance 2 Video Gen Skill for OpenClaw
 
 <p align="center">
   <strong>AI video generation and more — install in one command, start creating in seconds.</strong>

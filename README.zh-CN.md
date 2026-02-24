@@ -1,4 +1,4 @@
-# EvoLink Skills — OpenClaw 技能包
+# Seedance 2 Video Gen Skill — OpenClaw 技能包
 
 <p align="center">
   <strong>AI 视频生成等能力 — 一条命令安装，秒级开始创作。</strong>
