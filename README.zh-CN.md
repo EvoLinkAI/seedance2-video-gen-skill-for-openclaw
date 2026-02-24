@@ -31,7 +31,7 @@
 
 📚 **完整指南**：[awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — 提示词、使用案例、功能展示
 
-🚀 **Seedance 2.0 API 抢先体验**：[seedance2api.app](https://seedance2api.app/)
+🚀 **[申请 Seedance 2.0 API 抢先体验 →](https://seedance2api.app/)**
 
 **说明**：当前使用 Seedance 1.5 Pro。Seedance 2.0 上线后，无需任何迁移操作，直接可用。
 

@@ -31,7 +31,7 @@ Currently available:
 
 📚 **Complete Guide**: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — Prompts, use cases, and capabilities showcase
 
-🚀 **Seedance 2.0 API Early Access**: [seedance2api.app](https://seedance2api.app/)
+🚀 **[Get Seedance 2.0 API Early Access →](https://seedance2api.app/)**
 
 **Note**: Currently using Seedance 1.5 Pro. When Seedance 2.0 launches, zero migration needed — it works automatically.
 
