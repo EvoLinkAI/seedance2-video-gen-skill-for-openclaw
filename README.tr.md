@@ -28,7 +28,7 @@
 
 ## Bu Nedir?
 
-[EvoLink](https://evolink.ai) tarafından desteklenen [OpenClaw](https://github.com/openclaw/openclaw) yetenekleri koleksiyonu. Bir yetenek yükleyin ve AI ajanınız yeni yetenekler kazansın — video oluşturma, medya işleme ve daha fazlası.
+[EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) tarafından desteklenen [OpenClaw](https://github.com/openclaw/openclaw) yetenekleri koleksiyonu. Bir yetenek yükleyin ve AI ajanınız yeni yetenekler kazansın — video oluşturma, medya işleme ve daha fazlası.
 
 Şu anda mevcut:
 
@@ -155,8 +155,8 @@ Tam API belgeleri için [references/api-params.md](references/api-params.md)'ye 
 | Sorun | Çözüm |
 |-------|-------|
 | `jq: command not found` | jq yükleyin: `apt install jq` / `brew install jq` |
-| `401 Unauthorized` | [evolink.ai/dashboard](https://evolink.ai/dashboard)'da `EVOLINK_API_KEY`'nizi kontrol edin |
-| `402 Payment Required` | [evolink.ai/dashboard](https://evolink.ai/dashboard)'da kredi ekleyin |
+| `401 Unauthorized` | [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen)'da `EVOLINK_API_KEY`'nizi kontrol edin |
+| `402 Payment Required` | [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen)'da kredi ekleyin |
 | `Content blocked` | Gerçekçi insan yüzleri kısıtlıdır — prompt'unuzu değiştirin |
 | Oluşturma zaman aşımı | Videolar ayarlara bağlı olarak 30–180 saniye sürebilir. Önce daha düşük kalite deneyin. |
 
