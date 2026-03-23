@@ -28,7 +28,7 @@
 
 ## 這是什麼？
 
-一套基於 [EvoLink](https://evolink.ai) 的 [OpenClaw](https://github.com/openclaw/openclaw) 技能包。安裝一個技能，你的 AI 代理就獲得新能力 — 生成影片、處理媒體等。
+一套基於 [EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 的 [OpenClaw](https://github.com/openclaw/openclaw) 技能包。安裝一個技能，你的 AI 代理就獲得新能力 — 生成影片、處理媒體等。
 
 當前可用：
 
@@ -155,8 +155,8 @@ export EVOLINK_API_KEY=your_key_here
 | 問題 | 解決方案 |
 |------|---------|
 | `jq: command not found` | 安裝 jq：`apt install jq` / `brew install jq` |
-| `401 Unauthorized` | 檢查 `EVOLINK_API_KEY`，在 [evolink.ai/dashboard](https://evolink.ai/dashboard) 確認 |
-| `402 Payment Required` | 在 [evolink.ai/dashboard](https://evolink.ai/dashboard) 充值 |
+| `401 Unauthorized` | 檢查 `EVOLINK_API_KEY`，在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 確認 |
+| `402 Payment Required` | 在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 充值 |
 | 內容被攔截 | 真實人臉受限 — 修改提示詞 |
 | 生成超時 | 影片生成需 30–180 秒，先試低分辨率 |
 
