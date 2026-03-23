@@ -28,7 +28,7 @@
 
 ## 이것은 무엇인가요?
 
-[EvoLink](https://evolink.ai) 제공 [OpenClaw](https://github.com/openclaw/openclaw) 스킬 모음입니다. 스킬을 설치하면 AI 에이전트에 새로운 기능이 추가됩니다 — 비디오 생성, 미디어 처리 등.
+[EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 제공 [OpenClaw](https://github.com/openclaw/openclaw) 스킬 모음입니다. 스킬을 설치하면 AI 에이전트에 새로운 기능이 추가됩니다 — 비디오 생성, 미디어 처리 등.
 
 현재 사용 가능:
 
@@ -155,8 +155,8 @@ OpenClaw 에이전트와 자연스러운 대화를 통해 AI 비디오를 생성
 | 문제 | 해결책 |
 |------|--------|
 | `jq: command not found` | jq 설치: `apt install jq` / `brew install jq` |
-| `401 Unauthorized` | [evolink.ai/dashboard](https://evolink.ai/dashboard)에서 `EVOLINK_API_KEY` 확인 |
-| `402 Payment Required` | [evolink.ai/dashboard](https://evolink.ai/dashboard)에서 크레딧 추가 |
+| `401 Unauthorized` | [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen)에서 `EVOLINK_API_KEY` 확인 |
+| `402 Payment Required` | [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen)에서 크레딧 추가 |
 | `Content blocked` | 사실적인 인간 얼굴은 제한됨 — 프롬프트 수정 |
 | 생성 타임아웃 | 설정에 따라 30–180초 소요될 수 있습니다. 먼저 낮은 품질로 시도하세요. |
 
