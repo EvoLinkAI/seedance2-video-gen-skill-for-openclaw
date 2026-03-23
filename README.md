@@ -28,7 +28,7 @@
 
 ## What is This?
 
-A collection of [OpenClaw](https://github.com/openclaw/openclaw) skills powered by [EvoLink](https://evolink.ai). Install a skill and your AI agent gains new capabilities — generate videos, process media, and more.
+A collection of [OpenClaw](https://github.com/openclaw/openclaw) skills powered by [EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen). Install a skill and your AI agent gains new capabilities — generate videos, process media, and more.
 
 Currently available:
 
@@ -155,8 +155,8 @@ See [references/api-params.md](references/api-params.md) for complete API docume
 | Issue | Solution |
 |-------|---------|
 | `jq: command not found` | Install jq: `apt install jq` / `brew install jq` |
-| `401 Unauthorized` | Check your `EVOLINK_API_KEY` at [evolink.ai/dashboard](https://evolink.ai/dashboard) |
-| `402 Payment Required` | Add credits at [evolink.ai/dashboard](https://evolink.ai/dashboard) |
+| `401 Unauthorized` | Check your `EVOLINK_API_KEY` at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) |
+| `402 Payment Required` | Add credits at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) |
 | `Content blocked` | Realistic human faces are restricted — modify your prompt |
 | Generation timeout | Videos can take 30–180s depending on settings. Try lower quality first. |
 
