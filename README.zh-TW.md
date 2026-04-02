@@ -47,16 +47,28 @@
 ### 快速安裝（推薦）
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/evolink-skills
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 搞定。技能已可供代理使用。
 
+### 通過 npm 安裝
+
+```bash
+npx evolink-seedance
+```
+
+或使用非交互模式（適用於 AI 代理 / CI）：
+
+```bash
+npx evolink-seedance -y
+```
+
 ### 手動安裝
 
 ```bash
-git clone https://github.com/EvoLinkAI/evolink-skills.git
-cd evolink-skills
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
 

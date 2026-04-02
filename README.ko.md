@@ -47,16 +47,28 @@
 ### 빠른 설치 (권장)
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/evolink-skills
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 끝입니다. 스킬이 에이전트에서 사용 가능합니다.
 
+### npm으로 설치
+
+```bash
+npx evolink-seedance
+```
+
+또는 비대화형 모드 (AI 에이전트 / CI용):
+
+```bash
+npx evolink-seedance -y
+```
+
 ### 수동 설치
 
 ```bash
-git clone https://github.com/EvoLinkAI/evolink-skills.git
-cd evolink-skills
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
 

@@ -47,16 +47,28 @@ Weitere Skills in Kürze.
 ### Schnellinstallation (Empfohlen)
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/evolink-skills
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 Das war's. Der Skill ist jetzt für Ihren Agenten verfügbar.
 
+### Über npm installieren
+
+```bash
+npx evolink-seedance
+```
+
+Oder nicht-interaktiv (für KI-Agenten / CI):
+
+```bash
+npx evolink-seedance -y
+```
+
 ### Manuelle Installation
 
 ```bash
-git clone https://github.com/EvoLinkAI/evolink-skills.git
-cd evolink-skills
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
 

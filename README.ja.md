@@ -47,16 +47,28 @@
 ### クイックインストール（推奨）
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/evolink-skills
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 完了です。スキルがエージェントで利用可能になりました。
 
+### npm でインストール
+
+```bash
+npx evolink-seedance
+```
+
+または非対話モード（AI エージェント / CI 向け）：
+
+```bash
+npx evolink-seedance -y
+```
+
 ### 手動インストール
 
 ```bash
-git clone https://github.com/EvoLinkAI/evolink-skills.git
-cd evolink-skills
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
 

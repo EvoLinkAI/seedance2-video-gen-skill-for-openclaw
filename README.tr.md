@@ -47,16 +47,28 @@ Daha fazla yetenek yakında.
 ### Hızlı Kurulum (Önerilen)
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/evolink-skills
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 Hepsi bu. Yetenek artık ajanınızda kullanılabilir.
 
+### npm ile Kurulum
+
+```bash
+npx evolink-seedance
+```
+
+Veya etkileşimsiz mod (AI ajanları / CI için):
+
+```bash
+npx evolink-seedance -y
+```
+
 ### Manuel Kurulum
 
 ```bash
-git clone https://github.com/EvoLinkAI/evolink-skills.git
-cd evolink-skills
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
 
