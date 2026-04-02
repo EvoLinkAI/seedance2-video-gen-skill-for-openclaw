@@ -1,0 +1,27 @@
+{
+  "name": "evolink-seedance",
+  "version": "2.0.0",
+  "description": "Seedance 2.0 AI video generation skill for OpenClaw — install in one command",
+  "bin": {
+    "evolink-seedance": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "_meta.json",
+    "scripts/",
+    "references/",
+    "LICENSE"
+  ],
+  "keywords": ["seedance", "video-generation", "ai-video", "openclaw", "evolink", "bytedance"],
+  "author": "EvoLink AI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw"
+  },
+  "homepage": "https://evolink.ai",
+  "engines": {
+    "node": ">=16"
+  }
+}
