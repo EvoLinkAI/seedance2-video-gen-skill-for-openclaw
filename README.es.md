@@ -34,13 +34,9 @@ Disponible actualmente:
 
 | Habilidad | Descripción | Modelo |
 |-----------|-------------|--------|
-| **Seedance Video Gen** | Texto a video e imagen a video con audio automático | Seedance 1.5 Pro → 2.0 (ByteDance) |
+| **Seedance Video Gen** | Texto a video, imagen a video, referencia a video con audio automático | Seedance 2.0 (ByteDance) |
 
 📚 **Guía Completa**: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — Prompts, casos de uso y demostración de capacidades
-
-🚀 **[Obtener Acceso Anticipado a Seedance 2.0 API →](https://seedance2api.app/)**
-
-**Nota**: Actualmente usando Seedance 1.5 Pro. Cuando se lance Seedance 2.0, no se necesitará migración — funciona automáticamente.
 
 Más habilidades próximamente.
 
@@ -68,7 +64,7 @@ openclaw skills add .
 
 ## Obtener API Key
 
-1. Regístrate en [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_medium=readme[evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_campaign=seedance2-video-gen-skill-for-openclaw)
+1. Regístrate en [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)
 2. Ve a Dashboard → API Keys
 3. Crea una nueva key
 4. Configúrala en tu entorno:
@@ -87,12 +83,13 @@ Genera videos de IA mediante conversación natural con tu agente OpenClaw.
 
 ### Qué Puede Hacer
 
-- **Texto a video** — Describe una escena, obtén un video
-- **Imagen a video** — Proporciona imágenes de referencia para guiar el resultado
+- **Texto a video** — Describe una escena, obtén un video (con búsqueda web opcional)
+- **Imagen a video** — 1 imagen: animación desde primer fotograma; 2 imágenes: interpolación primer y último fotograma
+- **Referencia a video** — Combina imágenes, clips de video y audio para crear, editar o extender video
 - **Audio automático** — Voz, efectos de sonido y música de fondo sincronizados
-- **Múltiples resoluciones** — 480p, 720p, 1080p
-- **Duración flexible** — 4–12 segundos
-- **Relaciones de aspecto** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9
+- **Múltiples resoluciones** — 480p, 720p
+- **Duración flexible** — 4–15 segundos
+- **Relaciones de aspecto** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive
 
 ### Ejemplos de Uso
 
@@ -100,9 +97,11 @@ Solo habla con tu agente:
 
 > "Genera un video de 5 segundos de un gato tocando piano"
 
-> "Crea un atardecer cinematográfico sobre el océano, 1080p, 16:9"
+> "Crea un atardecer cinematográfico sobre el océano, 720p, 16:9"
 
 > "Usa esta imagen como referencia y anímala en un video de 8 segundos"
+
+> "Edita este clip de video — reemplaza el objeto con la imagen de mi producto"
 
 El agente te guiará a través de los detalles faltantes y manejará la generación.
 
@@ -119,8 +118,11 @@ La habilidad incluye `scripts/seedance-gen.sh` para uso directo en línea de com
 # Texto a video
 ./scripts/seedance-gen.sh "Un paisaje montañoso sereno al amanecer" --duration 5 --quality 720p
 
-# Con imagen de referencia
-./scripts/seedance-gen.sh "Suaves olas del océano" --image "https://example.com/beach.jpg" --duration 8 --quality 1080p
+# Imagen a video (animación desde primer fotograma)
+./scripts/seedance-gen.sh "Suaves olas del océano" --image "https://example.com/beach.jpg" --duration 8 --quality 720p
+
+# Referencia a video (editar clip con imagen)
+./scripts/seedance-gen.sh "Reemplaza el objeto con el producto de la imagen 1" --image "https://example.com/product.jpg" --video "https://example.com/clip.mp4" --duration 5 --quality 720p
 
 # Formato vertical para redes sociales
 ./scripts/seedance-gen.sh "Partículas bailando" --aspect-ratio 9:16 --duration 4 --quality 720p
@@ -159,6 +161,7 @@ Consulta [references/api-params.md](references/api-params.md) para documentació
 | `402 Payment Required` | Añade créditos en [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) |
 | `Content blocked` | Rostros humanos realistas están restringidos — modifica tu prompt |
 | Timeout de generación | Los videos pueden tardar 30–180s según configuración. Intenta menor calidad primero. |
+| Video demasiado grande | Los videos de referencia deben ser ≤50MB cada uno, duración total ≤15s |
 
 ---
 

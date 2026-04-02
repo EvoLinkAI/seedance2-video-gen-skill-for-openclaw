@@ -34,13 +34,9 @@
 
 | 技能 | 描述 | 模型 |
 |------|------|------|
-| **Seedance 视频生成** | 文生视频、图生视频，自动配音 | Seedance 1.5 Pro → 2.0（字节跳动） |
+| **Seedance 视频生成** | 文生视频、图生视频、参考生视频，自动配音 | Seedance 2.0（字节跳动） |
 
 📚 **完整指南**：[awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — 提示词、使用案例、功能展示
-
-🚀 **[申请 Seedance 2.0 API 抢先体验 →](https://seedance2api.app/)**
-
-**说明**：当前使用 Seedance 1.5 Pro。Seedance 2.0 上线后，无需任何迁移操作，直接可用。
 
 更多技能即将推出。
 
@@ -68,7 +64,7 @@ openclaw skills add .
 
 ## 获取 API Key
 
-1. 在 [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_medium=readme[evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_campaign=seedance2-video-gen-skill-for-openclaw) 注册
+1. 在 [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw) 注册
 2. 进入 Dashboard → API Keys
 3. 创建新 Key
 4. 设置环境变量：
@@ -87,12 +83,13 @@ export EVOLINK_API_KEY=your_key_here
 
 ### 能力
 
-- **文生视频** — 描述场景，生成视频
-- **图生视频** — 提供参考图引导输出
+- **文生视频** — 描述场景，生成视频（支持联网搜索）
+- **图生视频** — 1 张图：首帧动画；2 张图：首尾帧插值
+- **参考生视频** — 组合图片、视频片段和音频，创建、编辑或延长视频
 - **自动配音** — 同步语音、音效、背景音乐
-- **多分辨率** — 480p、720p、1080p
-- **灵活时长** — 4–12 秒
-- **多比例** — 16:9、9:16、1:1、4:3、3:4、21:9
+- **多分辨率** — 480p、720p
+- **灵活时长** — 4–15 秒
+- **多比例** — 16:9、9:16、1:1、4:3、3:4、21:9、adaptive
 
 ### 使用示例
 
@@ -100,9 +97,11 @@ export EVOLINK_API_KEY=your_key_here
 
 > "生成一个 5 秒的猫弹钢琴视频"
 
-> "创建一个海上日落的电影级画面，1080p，16:9"
+> "创建一个海上日落的电影级画面，720p，16:9"
 
 > "用这张图作为参考，生成一个 8 秒的动画视频"
+
+> "编辑这个视频片段 — 把里面的物品替换成我的产品图"
 
 代理会引导你补充缺失信息并处理生成。
 
@@ -119,8 +118,11 @@ export EVOLINK_API_KEY=your_key_here
 # 文生视频
 ./scripts/seedance-gen.sh "宁静的山间黎明景色" --duration 5 --quality 720p
 
-# 带参考图
-./scripts/seedance-gen.sh "轻柔的海浪" --image "https://example.com/beach.jpg" --duration 8 --quality 1080p
+# 图生视频（首帧动画）
+./scripts/seedance-gen.sh "轻柔的海浪" --image "https://example.com/beach.jpg" --duration 8 --quality 720p
+
+# 参考生视频（用图片编辑视频片段）
+./scripts/seedance-gen.sh "将物品替换为图片1中的产品" --image "https://example.com/product.jpg" --video "https://example.com/clip.mp4" --duration 5 --quality 720p
 
 # 竖版（社交媒体）
 ./scripts/seedance-gen.sh "舞动的粒子" --aspect-ratio 9:16 --duration 4 --quality 720p
@@ -159,6 +161,7 @@ export EVOLINK_API_KEY=your_key_here
 | `401 Unauthorized` | 检查 `EVOLINK_API_KEY`，在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 确认 |
 | `402 Payment Required` | 在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 充值 |
 | 内容被拦截 | 真实人脸受限 — 修改提示词 |
+| 视频文件过大 | 参考视频每个不超过 50MB，总时长不超过 15 秒 |
 | 生成超时 | 视频生成需 30–180 秒，先试低分辨率 |
 
 ---

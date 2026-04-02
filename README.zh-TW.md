@@ -34,13 +34,9 @@
 
 | 技能 | 描述 | 模型 |
 |------|------|------|
-| **Seedance Video Gen** | 文生影片、圖生影片，自動配音 | Seedance 1.5 Pro → 2.0（字節跳動） |
+| **Seedance Video Gen** | 文生影片、圖生影片、參考生影片，自動配音 | Seedance 2.0（字節跳動） |
 
 📚 **完整指南**：[awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — 提示詞、使用案例、功能展示
-
-🚀 **[申請 Seedance 2.0 API 搶先體驗 →](https://seedance2api.app/)**
-
-**說明**：當前使用 Seedance 1.5 Pro。Seedance 2.0 上線後，無需任何遷移操作，直接可用。
 
 更多技能即將推出。
 
@@ -68,7 +64,7 @@ openclaw skills add .
 
 ## 取得 API Key
 
-1. 在 [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_medium=readme[evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_campaign=seedance2-video-gen-skill-for-openclaw) 註冊
+1. 在 [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw) 註冊
 2. 進入 Dashboard → API Keys
 3. 創建新 Key
 4. 設置環境變量：
@@ -87,12 +83,13 @@ export EVOLINK_API_KEY=your_key_here
 
 ### 能力
 
-- **文生影片** — 描述場景，生成影片
-- **圖生影片** — 提供參考圖引導輸出
+- **文生影片** — 描述場景，生成影片（支援聯網搜尋）
+- **圖生影片** — 1 張圖：首幀動畫；2 張圖：首尾幀插值
+- **參考生影片** — 組合圖片、影片片段和音訊，創建、編輯或延長影片
 - **自動配音** — 同步語音、音效、背景音樂
-- **多分辨率** — 480p、720p、1080p
-- **靈活時長** — 4–12 秒
-- **多比例** — 16:9、9:16、1:1、4:3、3:4、21:9
+- **多解析度** — 480p、720p
+- **靈活時長** — 4–15 秒
+- **多比例** — 16:9、9:16、1:1、4:3、3:4、21:9、adaptive
 
 ### 使用示例
 
@@ -100,9 +97,11 @@ export EVOLINK_API_KEY=your_key_here
 
 > 「生成一個 5 秒的貓彈鋼琴影片」
 
-> 「創建一個海上日落的電影級畫面，1080p，16:9」
+> 「創建一個海上日落的電影級畫面，720p，16:9」
 
 > 「用這張圖作為參考，生成一個 8 秒的動畫影片」
+
+> 「編輯這個影片片段 — 把裡面的物品替換成我的產品圖」
 
 代理會引導你補充缺失信息並處理生成。
 
@@ -119,13 +118,16 @@ export EVOLINK_API_KEY=your_key_here
 # 文生影片
 ./scripts/seedance-gen.sh "寧靜的山間黎明景色" --duration 5 --quality 720p
 
-# 帶參考圖
-./scripts/seedance-gen.sh "輕柔的海浪" --image "https://example.com/beach.jpg" --duration 8 --quality 1080p
+# 圖生影片（首幀動畫）
+./scripts/seedance-gen.sh "輕柔的海浪" --image "https://example.com/beach.jpg" --duration 8 --quality 720p
 
-# 竪版（社交媒體）
+# 參考生影片（用圖片編輯影片片段）
+./scripts/seedance-gen.sh "將物品替換為圖片1中的產品" --image "https://example.com/product.jpg" --video "https://example.com/clip.mp4" --duration 5 --quality 720p
+
+# 豎版（社交媒體）
 ./scripts/seedance-gen.sh "舞動的粒子" --aspect-ratio 9:16 --duration 4 --quality 720p
 
-# 無音頻
+# 無音訊
 ./scripts/seedance-gen.sh "抽象藝術動畫" --duration 6 --quality 720p --no-audio
 ```
 
@@ -158,6 +160,7 @@ export EVOLINK_API_KEY=your_key_here
 | `401 Unauthorized` | 檢查 `EVOLINK_API_KEY`，在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 確認 |
 | `402 Payment Required` | 在 [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) 充值 |
 | 內容被攔截 | 真實人臉受限 — 修改提示詞 |
+| 影片檔案過大 | 參考影片每個不超過 50MB，總時長不超過 15 秒 |
 | 生成超時 | 影片生成需 30–180 秒，先試低分辨率 |
 
 ---

@@ -34,13 +34,9 @@ Derzeit verfügbar:
 
 | Skill | Beschreibung | Modell |
 |-------|--------------|--------|
-| **Seedance Video Gen** | Text-zu-Video und Bild-zu-Video mit automatischem Audio | Seedance 1.5 Pro → 2.0 (ByteDance) |
+| **Seedance Video Gen** | Text-zu-Video, Bild-zu-Video, Referenz-zu-Video mit automatischem Audio | Seedance 2.0 (ByteDance) |
 
 📚 **Vollständiger Leitfaden**: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — Prompts, Anwendungsfälle und Funktionsübersicht
-
-🚀 **[Seedance 2.0 API Early Access erhalten →](https://seedance2api.app/)**
-
-**Hinweis**: Verwendet derzeit Seedance 1.5 Pro. Wenn Seedance 2.0 startet, ist keine Migration nötig — es funktioniert automatisch.
 
 Weitere Skills in Kürze.
 
@@ -68,7 +64,7 @@ openclaw skills add .
 
 ## API Key Erhalten
 
-1. Registrieren Sie sich bei [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_medium=readme[evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)utm_campaign=seedance2-video-gen-skill-for-openclaw)
+1. Registrieren Sie sich bei [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)
 2. Gehen Sie zu Dashboard → API Keys
 3. Erstellen Sie einen neuen Key
 4. Setzen Sie ihn in Ihrer Umgebung:
@@ -87,12 +83,13 @@ Erzeugen Sie KI-Videos durch natürliche Konversation mit Ihrem OpenClaw-Agenten
 
 ### Was Es Kann
 
-- **Text-zu-Video** — Beschreiben Sie eine Szene, erhalten Sie ein Video
-- **Bild-zu-Video** — Geben Sie Referenzbilder an, um das Ergebnis zu steuern
+- **Text-zu-Video** — Beschreiben Sie eine Szene, erhalten Sie ein Video (mit optionaler Websuche)
+- **Bild-zu-Video** — 1 Bild: Animation vom ersten Frame; 2 Bilder: Interpolation zwischen erstem und letztem Frame
+- **Referenz-zu-Video** — Kombinieren Sie Bilder, Videoclips und Audio zum Erstellen, Bearbeiten oder Verlängern von Videos
 - **Automatisches Audio** — Synchronisierte Stimme, Soundeffekte und Hintergrundmusik
-- **Mehrere Auflösungen** — 480p, 720p, 1080p
-- **Flexible Dauer** — 4–12 Sekunden
-- **Seitenverhältnisse** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9
+- **Mehrere Auflösungen** — 480p, 720p
+- **Flexible Dauer** — 4–15 Sekunden
+- **Seitenverhältnisse** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive
 
 ### Nutzungsbeispiele
 
@@ -100,9 +97,11 @@ Sprechen Sie einfach mit Ihrem Agenten:
 
 > "Erzeuge ein 5-Sekunden-Video von einer Katze, die Klavier spielt"
 
-> "Erstelle einen filmischen Sonnenuntergang über dem Ozean, 1080p, 16:9"
+> "Erstelle einen filmischen Sonnenuntergang über dem Ozean, 720p, 16:9"
 
 > "Verwende dieses Bild als Referenz und animiere es zu einem 8-Sekunden-Video"
+
+> "Bearbeite diesen Videoclip — ersetze den Gegenstand durch mein Produktbild"
 
 Der Agent führt Sie durch fehlende Details und verwaltet die Erzeugung.
 
@@ -119,8 +118,11 @@ Der Skill enthält `scripts/seedance-gen.sh` für direkte Kommandozeilennutzung:
 # Text-zu-Video
 ./scripts/seedance-gen.sh "Eine ruhige Berglandschaft im Morgengrauen" --duration 5 --quality 720p
 
-# Mit Referenzbild
-./scripts/seedance-gen.sh "Sanfte Meereswellen" --image "https://example.com/beach.jpg" --duration 8 --quality 1080p
+# Bild-zu-Video (Animation vom ersten Frame)
+./scripts/seedance-gen.sh "Sanfte Meereswellen" --image "https://example.com/beach.jpg" --duration 8 --quality 720p
+
+# Referenz-zu-Video (Videoclip mit Bild bearbeiten)
+./scripts/seedance-gen.sh "Ersetze den Gegenstand durch das Produkt aus Bild 1" --image "https://example.com/product.jpg" --video "https://example.com/clip.mp4" --duration 5 --quality 720p
 
 # Vertikales Format für Social Media
 ./scripts/seedance-gen.sh "Tanzende Partikel" --aspect-ratio 9:16 --duration 4 --quality 720p
@@ -159,6 +161,7 @@ Siehe [references/api-params.md](references/api-params.md) für vollständige AP
 | `402 Payment Required` | Guthaben unter [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) aufladen |
 | `Content blocked` | Realistische menschliche Gesichter sind eingeschränkt — passen Sie Ihren Prompt an |
 | Erzeugungs-Timeout | Videos können je nach Einstellung 30–180s dauern. Versuchen Sie zuerst niedrigere Qualität. |
+| Videodatei zu groß | Referenzvideos müssen ≤50MB sein, Gesamtdauer ≤15s |
 
 ---
 

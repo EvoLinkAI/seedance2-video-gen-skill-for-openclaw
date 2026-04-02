@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Seedance Video Generation Script
-# Usage: ./seedance-gen.sh "prompt" [--image urls] [--duration 5] [--quality 720p] [--aspect-ratio 16:9]
+# Seedance 2.0 Video Generation Script
+# Usage: ./seedance-gen.sh "prompt" [options]
+# Models: text-to-video | image-to-video | reference-to-video (auto-detected)
 # Requires: jq, curl
 # API endpoint: https://api.evolink.ai (hardcoded, not configurable)
 
@@ -20,6 +21,12 @@ QUALITY="720p"
 ASPECT_RATIO="16:9"
 GENERATE_AUDIO="true"
 IMAGE_URLS=""
+VIDEO_URLS=""
+AUDIO_URLS=""
+WEB_SEARCH="false"
+CALLBACK_URL=""
+EXPLICIT_MODE=""
+SELECTED_MODEL=""
 PROMPT=""
 
 # Colors for output
@@ -75,12 +82,31 @@ To get started:
 # Parse command line arguments
 parse_args() {
     if [[ $# -eq 0 ]]; then
-        error "Usage: $0 \"prompt\" [--image urls] [--duration 5] [--quality 720p] [--aspect-ratio 16:9] [--no-audio]
+        error "Usage: $0 \"prompt\" [options]
+
+Models (auto-detected from inputs, or use --mode to override):
+  text:      no media inputs       -> seedance-2.0-text-to-video
+  image:     1-2 images            -> seedance-2.0-image-to-video
+  reference: videos/audio/3+ imgs  -> seedance-2.0-reference-to-video
+
+Options:
+  --image <url[,url]>         Reference images (comma-separated; 1-2 for image mode, 0-9 for reference)
+  --video <url>               Reference video URL (repeatable, 0-3, reference mode only)
+  --audio <url>               Reference audio URL (repeatable, 0-3, reference mode only)
+  --duration <4-15>           Video duration in seconds (default: 5)
+  --quality <480p|720p>       Video resolution (default: 720p)
+  --aspect-ratio <ratio>      16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive (default: 16:9)
+  --no-audio                  Disable auto-generated audio
+  --web-search                Enable web search for enhanced timeliness (text mode only)
+  --callback <https://...>    HTTPS callback URL for async notification
+  --mode <text|image|reference>  Force model selection (overrides auto-detection)
 
 Examples:
   $0 \"A serene sunset over ocean waves\"
   $0 \"Dancing cat\" --duration 4 --quality 480p
-  $0 \"Beach scene\" --image \"url1.jpg,url2.jpg\" --aspect-ratio 16:9"
+  $0 \"Beach scene\" --image \"url1.jpg,url2.jpg\" --aspect-ratio adaptive
+  $0 \"Extend this clip\" --video \"https://example.com/clip.mp4\" --duration 10
+  $0 \"Add music\" --image \"url.jpg\" --audio \"https://example.com/bgm.mp3\""
     fi
 
     PROMPT="$1"
@@ -92,30 +118,64 @@ Examples:
                 IMAGE_URLS="$2"
                 shift 2
                 ;;
+            --video)
+                if [[ -n "$VIDEO_URLS" ]]; then
+                    VIDEO_URLS="$VIDEO_URLS $2"
+                else
+                    VIDEO_URLS="$2"
+                fi
+                shift 2
+                ;;
+            --audio)
+                if [[ -n "$AUDIO_URLS" ]]; then
+                    AUDIO_URLS="$AUDIO_URLS $2"
+                else
+                    AUDIO_URLS="$2"
+                fi
+                shift 2
+                ;;
             --duration)
                 DURATION="$2"
-                if [[ ! "$DURATION" =~ ^[0-9]+$ ]] || [[ "$DURATION" -lt 4 ]] || [[ "$DURATION" -gt 12 ]]; then
-                    error "Duration must be between 4-12 seconds"
+                if [[ ! "$DURATION" =~ ^[0-9]+$ ]] || [[ "$DURATION" -lt 4 ]] || [[ "$DURATION" -gt 15 ]]; then
+                    error "Duration must be between 4-15 seconds"
                 fi
                 shift 2
                 ;;
             --quality)
                 QUALITY="$2"
-                if [[ ! "$QUALITY" =~ ^(480p|720p|1080p)$ ]]; then
-                    error "Quality must be 480p, 720p, or 1080p"
+                if [[ ! "$QUALITY" =~ ^(480p|720p)$ ]]; then
+                    error "Quality must be 480p or 720p"
                 fi
                 shift 2
                 ;;
             --aspect-ratio)
                 ASPECT_RATIO="$2"
-                if [[ ! "$ASPECT_RATIO" =~ ^(16:9|9:16|1:1|4:3|3:4|21:9)$ ]]; then
-                    error "Aspect ratio must be one of: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9"
+                if [[ ! "$ASPECT_RATIO" =~ ^(16:9|9:16|1:1|4:3|3:4|21:9|adaptive)$ ]]; then
+                    error "Aspect ratio must be one of: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive"
                 fi
                 shift 2
                 ;;
             --no-audio)
                 GENERATE_AUDIO="false"
                 shift
+                ;;
+            --web-search)
+                WEB_SEARCH="true"
+                shift
+                ;;
+            --callback)
+                CALLBACK_URL="$2"
+                if [[ ! "$CALLBACK_URL" =~ ^https:// ]]; then
+                    error "Callback URL must use HTTPS protocol"
+                fi
+                shift 2
+                ;;
+            --mode)
+                EXPLICIT_MODE="$2"
+                if [[ ! "$EXPLICIT_MODE" =~ ^(text|image|reference)$ ]]; then
+                    error "Mode must be one of: text, image, reference"
+                fi
+                shift 2
                 ;;
             *)
                 error "Unknown parameter: $1"
@@ -124,11 +184,87 @@ Examples:
     done
 }
 
+# Select model based on inputs (auto-detect or explicit mode)
+select_model() {
+    local img_count=0
+    local vid_count=0
+    local audio_count=0
+
+    if [[ -n "$IMAGE_URLS" ]]; then
+        IFS=',' read -ra _imgs <<< "$IMAGE_URLS"
+        img_count=${#_imgs[@]}
+    fi
+
+    if [[ -n "$VIDEO_URLS" ]]; then
+        read -ra _vids <<< "$VIDEO_URLS"
+        vid_count=${#_vids[@]}
+    fi
+
+    if [[ -n "$AUDIO_URLS" ]]; then
+        read -ra _auds <<< "$AUDIO_URLS"
+        audio_count=${#_auds[@]}
+    fi
+
+    # Select model
+    if [[ -n "$EXPLICIT_MODE" ]]; then
+        case "$EXPLICIT_MODE" in
+            text)      SELECTED_MODEL="seedance-2.0-text-to-video" ;;
+            image)     SELECTED_MODEL="seedance-2.0-image-to-video" ;;
+            reference) SELECTED_MODEL="seedance-2.0-reference-to-video" ;;
+        esac
+    elif [[ $vid_count -gt 0 || $audio_count -gt 0 || $img_count -gt 2 ]]; then
+        SELECTED_MODEL="seedance-2.0-reference-to-video"
+    elif [[ $img_count -ge 1 && $img_count -le 2 ]]; then
+        SELECTED_MODEL="seedance-2.0-image-to-video"
+    else
+        SELECTED_MODEL="seedance-2.0-text-to-video"
+    fi
+
+    # Cross-validation
+    case "$SELECTED_MODEL" in
+        "seedance-2.0-text-to-video")
+            if [[ $img_count -gt 0 || $vid_count -gt 0 || $audio_count -gt 0 ]]; then
+                error "Text-to-video mode does not accept image, video, or audio inputs. Use --mode image or --mode reference instead."
+            fi
+            ;;
+        "seedance-2.0-image-to-video")
+            if [[ $img_count -lt 1 || $img_count -gt 2 ]]; then
+                error "Image-to-video mode requires 1-2 images (1 for first-frame, 2 for first+last-frame). Got $img_count images."
+            fi
+            if [[ $vid_count -gt 0 || $audio_count -gt 0 ]]; then
+                error "Image-to-video mode does not accept video or audio inputs. Use --mode reference instead."
+            fi
+            ;;
+        "seedance-2.0-reference-to-video")
+            if [[ $img_count -eq 0 && $vid_count -eq 0 ]]; then
+                error "Reference-to-video mode requires at least 1 image or 1 video."
+            fi
+            if [[ $img_count -gt 9 ]]; then
+                error "Reference-to-video supports up to 9 images. Got $img_count."
+            fi
+            if [[ $vid_count -gt 3 ]]; then
+                error "Reference-to-video supports up to 3 videos. Got $vid_count."
+            fi
+            if [[ $audio_count -gt 3 ]]; then
+                error "Reference-to-video supports up to 3 audio files. Got $audio_count."
+            fi
+            ;;
+    esac
+
+    # Warn if web_search used with non-text model
+    if [[ "$WEB_SEARCH" == "true" && "$SELECTED_MODEL" != "seedance-2.0-text-to-video" ]]; then
+        warn "web_search is only supported by text-to-video model; ignoring."
+        WEB_SEARCH="false"
+    fi
+}
+
 # Build JSON payload safely using jq (no shell injection)
 build_payload() {
     local json_payload
+
+    # Base payload (common to all models)
     json_payload=$(jq -n \
-        --arg model "seedance-1.5-pro" \
+        --arg model "$SELECTED_MODEL" \
         --arg prompt "$PROMPT" \
         --argjson duration "$DURATION" \
         --arg quality "$QUALITY" \
@@ -136,8 +272,8 @@ build_payload() {
         --argjson generate_audio "$GENERATE_AUDIO" \
         '{model: $model, prompt: $prompt, duration: $duration, quality: $quality, aspect_ratio: $aspect_ratio, generate_audio: $generate_audio}')
 
+    # Add image_urls (image and reference models)
     if [[ -n "$IMAGE_URLS" ]]; then
-        # Convert comma-separated URLs to JSON array safely via jq
         local url_array="[]"
         IFS=',' read -ra URLS <<< "$IMAGE_URLS"
         for url in "${URLS[@]}"; do
@@ -145,6 +281,38 @@ build_payload() {
             url_array=$(echo "$url_array" | jq --arg u "$url" '. + [$u]')
         done
         json_payload=$(echo "$json_payload" | jq --argjson urls "$url_array" '. + {image_urls: $urls}')
+    fi
+
+    # Add video_urls (reference model)
+    if [[ -n "$VIDEO_URLS" ]]; then
+        local vid_array="[]"
+        read -ra VIDS <<< "$VIDEO_URLS"
+        for url in "${VIDS[@]}"; do
+            url=$(echo "$url" | xargs)
+            vid_array=$(echo "$vid_array" | jq --arg u "$url" '. + [$u]')
+        done
+        json_payload=$(echo "$json_payload" | jq --argjson urls "$vid_array" '. + {video_urls: $urls}')
+    fi
+
+    # Add audio_urls (reference model)
+    if [[ -n "$AUDIO_URLS" ]]; then
+        local aud_array="[]"
+        read -ra AUDS <<< "$AUDIO_URLS"
+        for url in "${AUDS[@]}"; do
+            url=$(echo "$url" | xargs)
+            aud_array=$(echo "$aud_array" | jq --arg u "$url" '. + [$u]')
+        done
+        json_payload=$(echo "$json_payload" | jq --argjson urls "$aud_array" '. + {audio_urls: $urls}')
+    fi
+
+    # Add model_params.web_search (text model only)
+    if [[ "$WEB_SEARCH" == "true" ]]; then
+        json_payload=$(echo "$json_payload" | jq '. + {model_params: {web_search: true}}')
+    fi
+
+    # Add callback_url (all models, optional)
+    if [[ -n "$CALLBACK_URL" ]]; then
+        json_payload=$(echo "$json_payload" | jq --arg url "$CALLBACK_URL" '. + {callback_url: $url}')
     fi
 
     echo "$json_payload"
@@ -158,11 +326,11 @@ handle_error() {
     case $status_code in
         401)
             error "Invalid API key.
-→ Check your key at: https://evolink.ai/dashboard"
+-> Check your key at: https://evolink.ai/dashboard"
             ;;
         402)
             error "Insufficient account balance.
-→ Add credits at: https://evolink.ai/dashboard"
+-> Add credits at: https://evolink.ai/dashboard"
             ;;
         429)
             error "Rate limit exceeded. Please wait a few seconds and try again."
@@ -175,9 +343,11 @@ handle_error() {
             error_msg=$(echo "$response_body" | jq -r '.error // .message // empty' 2>/dev/null || echo "")
             if echo "$error_msg" | grep -qi "face\|人脸"; then
                 error "Content blocked: Realistic faces not supported.
-→ Please modify your prompt to avoid human faces."
-            elif echo "$error_msg" | grep -qi "file.*large\|size.*exceed"; then
-                error "File size error: Images must be ≤30MB each."
+-> Please modify your prompt to avoid human faces."
+            elif echo "$error_msg" | grep -qi "video.*large\|video.*size\|size.*exceed"; then
+                error "File size error: Videos must be <=50MB each. Total video input must be <=15 seconds."
+            elif echo "$error_msg" | grep -qi "file.*large\|image.*size"; then
+                error "File size error: Images must be <=30MB each."
             else
                 error "Request error (400): ${error_msg:-$response_body}"
             fi
@@ -193,7 +363,7 @@ submit_generation() {
     local payload
     payload=$(build_payload)
 
-    # Minimal output — only final result matters
+    # Minimal output -- only final result matters
 
     local http_code response_body
     response_body=$(curl --fail-with-body --show-error --silent \
@@ -228,7 +398,7 @@ poll_task() {
     start_time=$(date +%s)
     local poll_interval=$POLL_FAST_INTERVAL
 
-    # Silent polling — no output until completion or failure
+    # Silent polling -- no output until completion or failure
     while true; do
         local current_time elapsed
         current_time=$(date +%s)
@@ -285,10 +455,10 @@ poll_task() {
                 error "Generation failed: $error_msg"
                 ;;
             "processing"|"pending")
-                # Silent — no output during polling
+                # Silent -- no output during polling
                 ;;
             *)
-                # Silent — no output for unknown status
+                # Silent -- no output for unknown status
                 ;;
         esac
     done
@@ -299,6 +469,7 @@ main() {
     check_dependencies
     check_api_key
     parse_args "$@"
+    select_model
 
     submit_generation
     poll_task "$GLOBAL_TASK_ID"

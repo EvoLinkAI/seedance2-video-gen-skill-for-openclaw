@@ -34,15 +34,11 @@ Currently available:
 
 | Skill | Description | Model |
 |-------|-------------|-------|
-| **Seedance Video Gen** | Text-to-video and image-to-video with auto audio | Seedance 1.5 Pro → 2.0 (ByteDance) |
+| **Seedance Video Gen** | Text-to-video, image-to-video, reference-to-video with auto audio | Seedance 2.0 (ByteDance) |
 
 📚 **Complete Guide**: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide) — Prompts, use cases, and capabilities showcase
 
 🔌 **API Guide**: [Seedance-2.0-API](https://github.com/EvoLinkAI/Seedance-2.0-API) — pricing, models, endpoint docs, and integration examples
-
-🚀 **[Get Seedance 2.0 API Early Access →](https://seedance2api.app/)**
-
-**Note**: Currently using Seedance 1.5 Pro. When Seedance 2.0 launches, zero migration needed — it works automatically.
 
 More skills coming soon.
 
@@ -89,12 +85,13 @@ Generate AI videos through natural conversation with your OpenClaw agent.
 
 ### What It Can Do
 
-- **Text-to-video** — Describe a scene, get a video
-- **Image-to-video** — Provide reference images to guide output
+- **Text-to-video** — Describe a scene, get a video (with optional web search)
+- **Image-to-video** — 1 image: animate from first frame; 2 images: first + last frame interpolation
+- **Reference-to-video** — Combine images, video clips, and audio to create, edit, or extend video
 - **Auto audio** — Synchronized voice, sound effects, and background music
-- **Multiple resolutions** — 480p, 720p, 1080p
-- **Flexible duration** — 4–12 seconds
-- **Aspect ratios** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9
+- **Multiple resolutions** — 480p, 720p
+- **Flexible duration** — 4–15 seconds
+- **Aspect ratios** — 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive
 
 ### Usage Examples
 
@@ -102,9 +99,11 @@ Just talk to your agent:
 
 > "Generate a 5-second video of a cat playing piano"
 
-> "Create a cinematic sunset over the ocean, 1080p, 16:9"
+> "Create a cinematic sunset over the ocean, 720p, 16:9"
 
 > "Use this image as reference and animate it into a 8-second video"
+
+> "Edit this video clip — replace the item with my product image"
 
 The agent will guide you through any missing details and handle the generation.
 
@@ -121,8 +120,11 @@ The skill includes `scripts/seedance-gen.sh` for direct command-line use:
 # Text-to-video
 ./scripts/seedance-gen.sh "A serene mountain landscape at dawn" --duration 5 --quality 720p
 
-# With reference image
-./scripts/seedance-gen.sh "Gentle ocean waves" --image "https://example.com/beach.jpg" --duration 8 --quality 1080p
+# Image-to-video (animate from first frame)
+./scripts/seedance-gen.sh "Gentle ocean waves" --image "https://example.com/beach.jpg" --duration 8 --quality 720p
+
+# Reference-to-video (edit a video clip with an image)
+./scripts/seedance-gen.sh "Replace the item with the product from image 1" --image "https://example.com/product.jpg" --video "https://example.com/clip.mp4" --duration 5 --quality 720p
 
 # Vertical format for social media
 ./scripts/seedance-gen.sh "Dancing particles" --aspect-ratio 9:16 --duration 4 --quality 720p
@@ -160,6 +162,7 @@ See [references/api-params.md](references/api-params.md) for complete API docume
 | `401 Unauthorized` | Check your `EVOLINK_API_KEY` at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) |
 | `402 Payment Required` | Add credits at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen) |
 | `Content blocked` | Realistic human faces are restricted — modify your prompt |
+| Video file too large | Reference videos must be ≤50MB each, total duration ≤15s |
 | Generation timeout | Videos can take 30–180s depending on settings. Try lower quality first. |
 
 ---

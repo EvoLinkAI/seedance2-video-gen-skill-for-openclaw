@@ -1,20 +1,20 @@
 ---
 name: seedance-2-video-gen
-description: Seedance 2.0 AI video generation via EvoLink API. Text-to-video, image-to-video with auto audio (voice, SFX, BGM). Works with OpenClaw, Claude Code, Cursor. Powered by ByteDance Seedance model.
+description: Seedance 2.0 AI video generation via EvoLink API. Three modes — text-to-video, image-to-video (1-2 images), reference-to-video (images + videos + audio). Auto audio (voice, SFX, BGM). Works with OpenClaw, Claude Code, Cursor. Powered by ByteDance Seedance 2.0.
 homepage: https://github.com/EvoLinkAI/evolink-skills
 metadata: {"openclaw":{"homepage":"https://github.com/EvoLinkAI/evolink-skills","requires":{"bins":["jq","curl"],"env":["EVOLINK_API_KEY"]},"primaryEnv":"EVOLINK_API_KEY"}}
 ---
 
 # Seedance Video Generation
 
-An interactive AI video generation assistant powered by the Seedance model via EvoLink API.
+An interactive AI video generation assistant powered by the Seedance 2.0 model via EvoLink API.
 
 ## After Installation
 
 When this skill is first loaded, proactively greet the user and start the setup:
 
 1. Check if `EVOLINK_API_KEY` is set
-   - **If not set:** "To generate videos, you'll need an EvoLink API key. It takes 30 seconds to get one — just sign up at evolink.ai/signup/signup. Want me to walk you through it?"
+   - **If not set:** "To generate videos, you'll need an EvoLink API key. It takes 30 seconds to get one — just sign up at evolink.ai/signup. Want me to walk you through it?"
    - **If already set:** "You're all set! What kind of video would you like to create?"
 
 2. That's it. One question. The user is now in the flow.
@@ -53,17 +53,22 @@ Check what the user has already provided and **only ask about what's missing**:
 
 | Parameter | What to tell the user | Required? |
 |-----------|----------------------|-----------|
+| **Mode / intent** | Three modes available: (1) **Text-to-video** — describe a scene, get a video; (2) **Image-to-video** — animate from 1-2 reference photos; (3) **Reference-to-video** — remix/edit/extend using images, video clips, and audio. Determine which mode fits from context, or ask if unclear. | Yes |
 | **Video content** (prompt) | Ask what they'd like to see. If they need inspiration, suggest a few ideas for them to pick from or build on. | Yes |
-| **Duration** | Supported: **4–12 seconds**. Ask how long they want. | Yes |
-| **Resolution** | Supported: **480p** / **720p** / **1080p**. Ask their preference. | Yes |
+| **Duration** | Supported: **4–15 seconds**. Ask how long they want. | Yes |
+| **Resolution** | Supported: **480p** / **720p**. Ask their preference. | Yes |
 | **Audio** | The model can auto-generate **voice, sound effects, and background music** matching the video. Ask if they want audio enabled. | Yes |
-| **Aspect ratio** | Supported: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9. Only mention if relevant or if user asks. | Optional |
-| **Reference images** | Supported: up to 9 images (JPEG/PNG/WebP, ≤30MB each). Only mention if relevant. | Optional |
+| **Aspect ratio** | Supported: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, **adaptive** (model chooses best fit). Only mention if relevant or if user asks. | Optional |
+| **Reference images** | Image-to-video: 1–2 images (JPEG/PNG/WebP, ≤30MB each). 1 image = first-frame animation; 2 images = first+last frame interpolation. Reference mode: 0–9 images. | Conditional |
+| **Reference videos** | Reference mode only: 0–3 videos (.mp4/.mov, 2–15s each, total ≤15s, ≤50MB each). Use for camera reference, motion reference, or as source video for editing/extension. | Conditional |
+| **Reference audio** | Reference mode only: 0–3 audio files (.wav/.mp3, 2–15s each, total ≤15s, ≤15MB each). Use for background music, sound effects, or voice reference. | Conditional |
+| **Web search** | Text mode only: enables the model to search the web for enhanced timeliness (e.g., current weather, trending topics). Only mention if the user's prompt involves time-sensitive content. | Optional |
 
 **Smart gathering rules:**
 - User gives everything at once → Confirm and generate immediately
 - User gives partial info → Only ask about the missing pieces
 - User says "I want to generate a video" with no details → Guide from the beginning
+- If user provides images/videos/audio, auto-detect the appropriate mode — no need to ask explicitly
 
 ### Step 4: Generate
 
@@ -79,17 +84,32 @@ Once all required information is confirmed:
 # Set API key
 export EVOLINK_API_KEY=your_key_here
 
-# Basic text-to-video
-./scripts/seedance-gen.sh "user's prompt" --duration 5 --quality 720p
+# Text-to-video (basic)
+./scripts/seedance-gen.sh "A serene sunset over ocean waves" --duration 5 --quality 720p
 
-# With audio disabled
-./scripts/seedance-gen.sh "user's prompt" --duration 8 --quality 1080p --no-audio
+# Text-to-video with web search (time-sensitive content)
+./scripts/seedance-gen.sh "Today's weather in Tokyo with animated forecast" --duration 8 --quality 720p --web-search
 
-# With reference image
-./scripts/seedance-gen.sh "user's prompt" --image "https://example.com/ref.jpg" --duration 6 --quality 720p
+# Image-to-video: 1 image (animate from first frame)
+./scripts/seedance-gen.sh "The camera slowly zooms in, the scene comes to life" --image "https://example.com/scene.jpg" --duration 6 --quality 720p
 
-# Custom aspect ratio
-./scripts/seedance-gen.sh "user's prompt" --aspect-ratio 9:16 --duration 4 --quality 480p
+# Image-to-video: 2 images (first + last frame interpolation)
+./scripts/seedance-gen.sh "A smooth transition between day and night" --image "https://example.com/day.jpg,https://example.com/night.jpg" --duration 8 --quality 720p
+
+# Reference-to-video: edit a video clip
+./scripts/seedance-gen.sh "Replace the item in the box with the product from image 1" --image "https://example.com/product.jpg" --video "https://example.com/original.mp4" --duration 5 --quality 720p
+
+# Reference-to-video: extend/remix with audio
+./scripts/seedance-gen.sh "Continue the scene with this background music" --video "https://example.com/clip.mp4" --audio "https://example.com/bgm.mp3" --duration 10 --quality 720p
+
+# Adaptive aspect ratio (model chooses best fit)
+./scripts/seedance-gen.sh "A tall waterfall in a narrow canyon" --aspect-ratio adaptive --duration 5 --quality 720p
+
+# Without audio
+./scripts/seedance-gen.sh "Abstract art animation" --duration 6 --quality 720p --no-audio
+
+# Force specific mode
+./scripts/seedance-gen.sh "Remix these elements" --mode reference --image "url1" --video "url2" --duration 8 --quality 720p
 ```
 
 ## Error Handling
@@ -102,21 +122,24 @@ Provide friendly, actionable messages:
 | Insufficient balance (402) | "Your account balance is low. You can add credits at https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw" |
 | Rate limited (429) | "Too many requests — let's wait a moment and try again" |
 | Content blocked (400) | "This prompt was flagged (realistic human faces are restricted). Try adjusting the description" |
+| Video file too large (400) | "One of the video files is too large. Each video must be ≤50MB and total video duration ≤15 seconds" |
+| Image file too large (400) | "One of the images is too large. Each image must be ≤30MB" |
 | Service unavailable (503) | "The service is temporarily busy. Let's try again in a minute" |
 
 ## Model Capabilities Summary
 
 Use this when the user asks what the model can do:
 
-- **Text-to-video**: Describe a scene, get a video
-- **Image-to-video**: Provide reference images to guide the output
-- **Audio generation**: Auto-generates synchronized voice, sound effects, and background music
-- **Duration**: 4–12 seconds
-- **Resolution**: 480p, 720p, 1080p
-- **Aspect ratios**: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9
+- **Text-to-video** (`seedance-2.0-text-to-video`): Describe a scene, get a video. Optional web search for time-sensitive content.
+- **Image-to-video** (`seedance-2.0-image-to-video`): 1 image = animate from first frame; 2 images = first+last frame interpolation.
+- **Reference-to-video** (`seedance-2.0-reference-to-video`): Multimodal — combine images (0–9), video clips (0–3), audio (0–3), and a text prompt to create, edit, or extend video. Use natural language in the prompt to reference inputs by number.
+- **Audio generation**: Auto-generates synchronized voice, sound effects, and background music (enabled by default).
+- **Duration**: 4–15 seconds
+- **Resolution**: 480p, 720p
+- **Aspect ratios**: 16:9, 9:16, 1:1, 4:3, 3:4, 21:9, adaptive
 - **Limitation**: Realistic human faces are restricted
 
 ## References
 
-- `references/api-params.md`: Complete API parameter reference
-- `scripts/seedance-gen.sh`: Generation script with automatic polling and error handling
+- `references/api-params.md`: Complete API parameter reference for all three models
+- `scripts/seedance-gen.sh`: Generation script with automatic model selection, polling, and error handling
