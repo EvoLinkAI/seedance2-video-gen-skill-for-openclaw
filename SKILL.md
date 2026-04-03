@@ -64,19 +64,23 @@ Check what the user has already provided and **only ask about what's missing**:
 | **Reference audio** | Reference mode only: 0–3 audio files (.wav/.mp3, 2–15s each, total ≤15s, ≤15MB each). Use for background music, sound effects, or voice reference. | Conditional |
 | **Web search** | Text mode only: enables the model to search the web for enhanced timeliness (e.g., current weather, trending topics). Only mention if the user's prompt involves time-sensitive content. | Optional |
 
-**Smart gathering rules:**
-- User gives everything at once → Confirm and generate immediately
-- User gives partial info → Only ask about the missing pieces
-- User says "I want to generate a video" with no details → Guide from the beginning
-- If user provides images/videos/audio, auto-detect the appropriate mode — no need to ask explicitly
+**Smart gathering rules — STRICT:**
+- **Ask ALL missing parameters in ONE single message.** Never split into multiple rounds of questions.
+- **Never ask the same question twice.** If the user already answered a parameter, it is final — do not re-ask it.
+- **Offer defaults upfront** so users can say "default is fine": `5s / 720p / audio on / 16:9`. If the user says "default" or "just go", use these values immediately.
+- User gives everything at once → Confirm and generate immediately, no further questions.
+- User gives partial info → Ask only the remaining missing required fields, all in one message.
+- If user provides images/videos/audio, auto-detect the appropriate mode — no need to ask explicitly.
+- **Duration, Resolution, Audio** all have sensible defaults — if the user skips them, use defaults and proceed.
 
 ### Step 4: Generate
 
 Once all required information is confirmed:
 
 1. Tell the user: "Generating your video now — this usually takes 30–120 seconds. I'll let you know when it's ready."
-2. Run the generation script. **Do NOT forward each line of script output to the user.** The script prints polling status internally — ignore it. Only report the final result.
-3. When complete, share the video URL (valid for 24 hours) and generation time.
+2. Run the generation script **once**. **NEVER run it a second time** unless the user explicitly asks to retry.
+3. Watch stdout for structured lines and act accordingly (see **Script Output Protocol** below).
+4. When complete, share the video URL (valid for 24 hours) and generation time.
 
 ## Script Usage
 
@@ -118,13 +122,14 @@ The script writes structured lines to stdout that you must parse and act on:
 
 | Line format | When | Your action |
 |-------------|------|-------------|
-| `STATUS_UPDATE: <message>` | Every ~30s during generation | **Relay to the user immediately** — tell them the video is still being generated with the elapsed/remaining time |
+| `TASK_SUBMITTED: task_id=<id> estimated=<Ns>` | Right after submission | **Confirm to the user that generation has started.** This means the API call succeeded — do NOT retry. |
+| `STATUS_UPDATE: <message>` | Every ~30s during generation | **Relay to the user** — e.g., *"Still working on your video, about 45 seconds remaining..."* |
 | `VIDEO_URL=<url>` | On success | Extract the URL and present the video to the user |
 | `ELAPSED=<Ns>` | On success | Optionally mention how long it took |
-| `WARNING: ...` | On timeout (>10 min) | Inform user that generation may still be running and suggest checking back |
+| `WARNING: ...` | On timeout (>10 min) | Inform user generation may still be running, suggest checking back |
 | `ERROR: ...` (stderr) | On failure | Surface the error message to the user |
 
-**Important for STATUS_UPDATE**: Video generation can take 30 seconds to 3 minutes. When you see a `STATUS_UPDATE:` line, relay it naturally — e.g., *"Still working on your video, about 45 seconds remaining..."*. Do not stay silent the whole time.
+**Critical**: Once you see `TASK_SUBMITTED:`, the task is queued on the server. **Do NOT run the script again.** Retrying wastes the user's API credits. If the script times out locally, the video may still complete — tell the user to check their dashboard at https://evolink.ai/dashboard.
 
 ## Error Handling
 

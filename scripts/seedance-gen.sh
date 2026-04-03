@@ -370,6 +370,7 @@ submit_generation() {
 
     local http_code response_body
     response_body=$(curl --fail-with-body --show-error --silent \
+        --connect-timeout 15 --max-time 30 \
         -w "\n%{http_code}" \
         -X POST "${API_BASE}/v1/videos/generations" \
         -H "Authorization: Bearer ${EVOLINK_API_KEY}" \
@@ -397,6 +398,9 @@ submit_generation() {
     local estimated_time
     estimated_time=$(echo "$response_body" | jq -r '.task_info.estimated_time // 120' 2>/dev/null)
     GLOBAL_ESTIMATED_TIME="${estimated_time:-120}"
+
+    # Signal to the AI agent that the task is queued — MUST NOT retry after this line
+    echo "TASK_SUBMITTED: task_id=${task_id} estimated=${GLOBAL_ESTIMATED_TIME}s"
 }
 
 # Poll task status
@@ -441,6 +445,7 @@ poll_task() {
 
         local http_code response_body
         response_body=$(curl --fail-with-body --show-error --silent \
+            --connect-timeout 10 --max-time 15 \
             -w "\n%{http_code}" \
             -X GET "${API_BASE}/v1/tasks/${task_id}" \
             -H "Authorization: Bearer ${EVOLINK_API_KEY}" 2>&1) || true
