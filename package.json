@@ -1,6 +1,6 @@
 {
   "name": "evolink-seedance",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Seedance 2.0 AI video generation skill for OpenClaw — install in one command",
   "bin": {
     "evolink-seedance": "./bin/cli.js"
