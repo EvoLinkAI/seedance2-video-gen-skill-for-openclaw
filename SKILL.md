@@ -77,9 +77,12 @@ Check what the user has already provided and **only ask about what's missing**:
 
 Once all required information is confirmed:
 
-1. Tell the user: "Generating your video now — this usually takes 30–120 seconds. I'll let you know when it's ready."
+1. **Before running the script**, immediately send the user a message: "Got it! Starting your video now — this usually takes 1–3 minutes. I'll keep you posted while it generates 🎬"
 2. Run the generation script **once**. **NEVER run it a second time** unless the user explicitly asks to retry.
-3. Watch stdout for structured lines and act accordingly (see **Script Output Protocol** below).
+3. **While the script is running**, actively relay progress to the user:
+   - When you see `TASK_SUBMITTED:` → send: "✅ Task submitted! Generation has started."
+   - When you see each `STATUS_UPDATE:` line → **immediately send it to the user as a natural message**, e.g. "Still generating... about 45 seconds remaining, hang tight!" — do **not** buffer these until the end. The user should never wait more than 30 seconds without hearing from you.
+   - If you cannot stream line-by-line, send a reassuring message every ~30 seconds: "Still working on it, almost there..."
 4. When complete, share the video URL (valid for 24 hours) and generation time.
 
 ## Script Usage
