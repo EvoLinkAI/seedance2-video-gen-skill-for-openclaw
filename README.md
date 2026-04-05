@@ -40,7 +40,7 @@ Currently available:
 
 🔌 **API Guide**: [Seedance-2.0-API](https://github.com/EvoLinkAI/Seedance-2.0-API) — pricing, models, endpoint docs, and integration examples
 
-More skills coming soon.
+More skills Now Available.
 
 ---
 
