@@ -1,0 +1,38 @@
+{
+  "name": "evolink-gpt-image",
+  "version": "1.1.0",
+  "description": "GPT Image 2 AI image generation skill for OpenClaw / Claude Code / OpenCode — install in one command",
+  "bin": {
+    "evolink-gpt-image": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "llms-install.md",
+    "_meta.json",
+    "scripts/",
+    "references/",
+    "LICENSE"
+  ],
+  "keywords": [
+    "gpt-image-2",
+    "image-generation",
+    "ai-image",
+    "openclaw",
+    "claude-code",
+    "opencode",
+    "evolink",
+    "text-to-image",
+    "image-editing"
+  ],
+  "author": "EvoLink AI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EvoLinkAI/gpt-image-2-gen-skill-for-openclaw"
+  },
+  "homepage": "https://evolink.ai",
+  "engines": {
+    "node": ">=16"
+  }
+}

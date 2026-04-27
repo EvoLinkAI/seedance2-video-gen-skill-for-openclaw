@@ -1,0 +1,6 @@
+.git
+.gitignore
+.claude/
+.github/
+README.*.md
+!README.md
