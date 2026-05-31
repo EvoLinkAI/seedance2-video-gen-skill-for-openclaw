@@ -1,12 +1,12 @@
-# GPT Image 2 API Parameters Reference
+# Seedance 2.0 Gateway Service Parameters Reference
 
-This document provides complete API parameter reference for the GPT Image 2 image generation service.
+This document provides complete API parameter reference for the Seedance 2.0 video generation service.
 
 ## API Endpoints
 
 ### Generation Request
 ```
-POST https://api.evolink.ai/v1/images/generations
+POST https://api.evolink.ai/v1/videos/generations
 Authorization: Bearer {EVOLINK_API_KEY}
 Content-Type: application/json
 ```
@@ -17,141 +17,265 @@ GET https://api.evolink.ai/v1/tasks/{task_id}
 Authorization: Bearer {EVOLINK_API_KEY}
 ```
 
-## Model Overview
+## Models Overview
+
+Seedance 2.0 provides three models, all sharing the same generation endpoint:
 
 | Model | Use Case | Key Inputs |
 |-------|----------|------------|
-| `gpt-image-2` | Text-to-image, image editing, batch generation | prompt (+ optional reference images) |
+| `seedance-2.0-text-to-video` | Generate video from text prompt only | prompt (+ optional web search) |
+| `seedance-2.0-image-to-video` | Animate from 1-2 reference images | prompt + 1-2 images |
+| `seedance-2.0-reference-to-video` | Multimodal remix, edit, extend video | prompt + images(0-9) + videos(0-3) + audio(0-3) |
 
-## Parameters
+## Common Parameters
 
-| Parameter | Type | Default | Required | Description |
-|-----------|------|---------|----------|-------------|
-| `model` | string | — | Yes | Must be `gpt-image-2` |
-| `prompt` | string | — | Yes | Image description or editing instructions. Max 32,000 characters (Unicode) |
-| `image_urls` | array | — | No | Reference image URLs for editing (1-16 images, <=50MB each). Formats: .jpeg, .jpg, .png, .webp |
-| `size` | string | `auto` | No | Image dimensions — ratio, pixel, or auto (see Size section) |
-| `resolution` | string | `1K` | No | Resolution tier: 1K, 2K, 4K. Only with ratio sizes |
-| `quality` | string | `medium` | No | Render quality: low, medium, high |
-| `n` | integer | `1` | No | Number of images to generate (1-10) |
-| `callback_url` | string | — | No | HTTPS callback URL for task completion |
+These parameters are shared across all three models:
 
----
+| Parameter | Type | Default | Options | Description |
+|-----------|------|---------|---------|-------------|
+| `model` | string | — | See models above | **Required.** Model name |
+| `prompt` | string | — | — | **Required.** Text description of desired video. Supports Chinese and English. Recommended: ≤500 chars (Chinese) or ≤1000 words (English) |
+| `duration` | integer | `5` | `4`–`15` | Video duration in seconds |
+| `quality` | string | `"720p"` | `"480p"`, `"720p"` | Video resolution |
+| `aspect_ratio` | string | `"16:9"` | `"16:9"`, `"9:16"`, `"1:1"`, `"4:3"`, `"3:4"`, `"21:9"`, `"adaptive"` | Video aspect ratio. `adaptive` lets the model choose based on inputs |
+| `generate_audio` | boolean | `true` | `true`, `false` | Generate synchronized audio (voice, SFX, music) at no additional charge |
+| `callback_url` | string | — | HTTPS URL | Optional callback for task completion/failure/cancellation. Must be HTTPS, no private IPs, ≤2048 chars. Retries up to 3 times on failure |
 
-## Size Parameter
+### Aspect Ratio Pixel Values
 
-Supports three formats:
-
-### 1. Ratio Format (15 presets)
-
-| Ratio | Description |
-|-------|-------------|
-| `1:1` | Square |
-| `1:2` / `2:1` | Extreme portrait / landscape |
-| `1:3` / `3:1` | Ultra portrait / landscape (max ratio) |
-| `2:3` / `3:2` | Standard portrait / landscape |
-| `3:4` / `4:3` | Traditional portrait / landscape |
-| `4:5` / `5:4` | Social media common |
-| `9:16` / `16:9` | Phone / desktop widescreen |
-| `9:21` / `21:9` | Ultra widescreen |
-
-### 2. Pixel Format
-
-`WxH` (e.g., `1024x1024`, `1536x1024`, `3840x2160`)
-
-Constraints:
-- Width and height must be multiples of **16**
-- Each dimension: **16 - 3840** pixels
-- Pixel budget: **655,360 <= W*H <= 8,294,400** (~0.65MP to ~8.3MP)
-- Max aspect ratio: **3:1**
-- `resolution` parameter is **ignored** in pixel format
-
-### 3. Auto
-
-`auto` — model decides the best size. `resolution` does not apply.
+| Aspect Ratio | 480p | 720p |
+|:------:|:----:|:----:|
+| 16:9 | 864x496 | 1280x720 |
+| 4:3 | 752x560 | 1112x834 |
+| 1:1 | 640x640 | 960x960 |
+| 3:4 | 560x752 | 834x1112 |
+| 9:16 | 496x864 | 720x1280 |
+| 21:9 | 992x432 | 1470x630 |
 
 ---
 
-## Resolution Parameter
+## Model 1: seedance-2.0-text-to-video
 
-Only applies when `size` is in ratio format.
+Generate video from text prompts only. No image, video, or audio inputs accepted.
 
-| Tier | Pixel Budget | Example (1:1) | Example (16:9) |
-|------|-------------|---------------|----------------|
-| `1K` | ~1MP (1,048,576) | 1024x1024 | 1360x768 |
-| `2K` | ~4MP (4,194,304) | 2048x2048 | 2736x1536 |
-| `4K` | ~8.29MP (8,294,400) | 2880x2880 | 3840x2160 (UHD) |
+### Unique Parameters
 
-### Full Resolution Table (Landscape / Square)
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_params.web_search` | boolean | `false` | When enabled, the model autonomously decides whether to search web content based on the prompt. May increase latency. Fees charged only when searches are actually triggered |
 
-| Ratio | 1K | 2K | 4K |
-|-------|----|----|-----|
-| `1:1` | 1024x1024 | 2048x2048 | 2880x2880 |
-| `2:1` | 1456x720 | 2896x1456 | 3840x1904* |
-| `3:1` | 1776x592 | 3552x1184 | 3840x1280* |
-| `3:2` | 1248x832 | 2512x1680 | 3520x2352 |
-| `4:3` | 1184x880 | 2368x1776 | 3312x2480* |
-| `5:4` | 1152x912 | 2288x1824 | 3216x2576 |
-| `16:9` | 1360x768 | 2736x1536 | 3840x2160 |
-| `21:9` | 1568x672 | 3136x1344 | 3840x1632* |
+### Constraints
 
-\* Auto-scaled down to fit pixel budget. Portrait ratios swap width/height.
+- Does **not** accept `image_urls`, `video_urls`, or `audio_urls`
+- Duration: 4–15 seconds
+- Quality: 480p, 720p
 
----
+### Example Payload
 
-## Quality Parameter
+```json
+{
+  "model": "seedance-2.0-text-to-video",
+  "prompt": "A macro lens focuses on a green glass frog on a leaf. The focus gradually shifts from its smooth skin to its completely transparent abdomen, where a bright red heart is beating powerfully and rhythmically.",
+  "duration": 8,
+  "quality": "720p",
+  "aspect_ratio": "16:9",
+  "generate_audio": true
+}
+```
 
-| Quality | Tile Base | Relative Cost (1024²) | Best For |
-|---------|-----------|----------------------|----------|
-| `low` | 16 | ~0.11x | Drafts, quick iterations |
-| `medium` | 48 | 1.0x | General use (default) |
-| `high` | 96 | ~4.0x | Final production, print |
+### Example with Web Search
 
-Text input tokens scale linearly with `n` (count).
-
----
-
-## Image Editing (image_urls)
-
-- **Count**: 1-16 images per request
-- **Max size per image**: 50MB
-- **Supported formats**: `.jpeg`, `.jpg`, `.png`, `.webp`
-- **URLs must be directly accessible** (direct download, not behind auth)
-- Reference images consume additional image input tokens
+```json
+{
+  "model": "seedance-2.0-text-to-video",
+  "prompt": "Today's New York weather forecast, with city skyline animation and temperature overlay display",
+  "duration": 8,
+  "aspect_ratio": "16:9",
+  "model_params": {
+    "web_search": true
+  }
+}
+```
 
 ---
 
-## Callback URL
+## Model 2: seedance-2.0-image-to-video
 
-- **Protocol**: HTTPS only
-- **No private IPs**: 127.0.0.1, 10.x.x.x, 172.16-31.x.x, 192.168.x.x are blocked
-- **Max length**: 2,048 characters
-- **Timeout**: 10 seconds
-- **Retries**: Up to 3 times on failure (1s / 2s / 4s intervals)
-- **Success**: 2xx response = success, other status codes trigger retry
-- **Payload format**: Same as task query response
+Generate video from 1-2 reference images. The model automatically determines the behavior:
+
+| Image Count | Behavior | Role |
+|:-----------:|----------|------|
+| 1 image | First-frame video generation | Image used as `first_frame` |
+| 2 images | First-last-frame video generation | 1st image -> `first_frame`, 2nd image -> `last_frame` |
+
+### Unique Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `image_urls` | array | **Yes** | 1-2 image URLs |
+
+### Image Constraints
+
+- **Supported formats**: `.jpeg`, `.png`, `.webp`
+- **Aspect ratio** (width/height): `0.4` ~ `2.5`
+- **Dimensions**: `300` ~ `6000` px (width and height)
+- **Max size per image**: 30MB
+- **Total request body**: ≤64MB (do not use Base64 encoding)
+- When providing first and last frames, both images can be identical. If aspect ratios differ, the first frame takes priority and the last frame is auto-cropped
+- Image URLs must be directly accessible by the server
+
+### Example Payload (First-Frame)
+
+```json
+{
+  "model": "seedance-2.0-image-to-video",
+  "prompt": "The camera slowly zooms in, the scene gradually comes to life",
+  "image_urls": [
+    "https://example.com/first-frame.jpg"
+  ],
+  "duration": 5,
+  "aspect_ratio": "adaptive",
+  "generate_audio": true
+}
+```
+
+### Example Payload (First + Last Frame)
+
+```json
+{
+  "model": "seedance-2.0-image-to-video",
+  "prompt": "A smooth transition between two scenes",
+  "image_urls": [
+    "https://example.com/first.jpg",
+    "https://example.com/last.jpg"
+  ],
+  "duration": 6,
+  "aspect_ratio": "16:9",
+  "generate_audio": true
+}
+```
+
+---
+
+## Model 3: seedance-2.0-reference-to-video
+
+Multimodal reference-based video generation. Combine images, video clips, and audio to create, edit, or extend video. The prompt can reference inputs by number (e.g., "use image 1 as first frame", "use video 1's camera movement", "use audio 1 as background music").
+
+### Unique Parameters
+
+| Parameter | Type | Count | Description |
+|-----------|------|-------|-------------|
+| `image_urls` | array | 0–9 | Reference images (style reference, product shots, first/last frame via prompt) |
+| `video_urls` | array | 0–3 | Reference videos (camera reference, motion reference, video to edit/extend) |
+| `audio_urls` | array | 0–3 | Reference audio (background music, sound effects, voice reference) |
+
+**Constraint**: Must provide at least 1 image OR 1 video. Cannot be audio-only.
+
+### Image Constraints
+
+Same as image-to-video model (see above).
+
+### Video Constraints
+
+- **Supported formats**: `.mp4`, `.mov`
+- **Resolution**: 480p, 720p
+- **Duration per video**: `2`–`15` seconds; max 3 videos; total duration ≤ `15` seconds
+- **Aspect ratio** (width/height): `0.4` ~ `2.5`
+- **Dimensions**: `300` ~ `6000` px
+- **Pixel count** (width x height): `409,600` ~ `927,408` (e.g., 640x640 ~ 834x1112)
+- **Max size per video**: 50MB
+- **Frame rate**: `24`–`60` FPS
+- **Total request body**: ≤64MB (do not use Base64)
+- Video input duration is billed separately
+- Video URLs must be directly accessible by the server
+
+### Audio Constraints
+
+- **Supported formats**: `.wav`, `.mp3`
+- **Duration per audio**: `2`–`15` seconds; max 3 files; total duration ≤ `15` seconds
+- **Max size per file**: 15MB
+- **Total request body**: ≤64MB (do not use Base64)
+- Audio URLs must be directly accessible by the server
+
+### Example Payload (Multimodal)
+
+```json
+{
+  "model": "seedance-2.0-reference-to-video",
+  "prompt": "Use video 1's first-person camera movement throughout. Use audio 1 as background music. First-person perspective fruit tea promotional ad...",
+  "image_urls": [
+    "https://example.com/product.jpg",
+    "https://example.com/scene.jpg"
+  ],
+  "video_urls": [
+    "https://example.com/reference.mp4"
+  ],
+  "audio_urls": [
+    "https://example.com/bgm.mp3"
+  ],
+  "duration": 10,
+  "quality": "720p",
+  "aspect_ratio": "16:9",
+  "generate_audio": true
+}
+```
+
+### Example Payload (Video Editing)
+
+```json
+{
+  "model": "seedance-2.0-reference-to-video",
+  "prompt": "Replace the perfume in the gift box from video 1 with the cream from image 1, keep the camera movement unchanged",
+  "image_urls": [
+    "https://example.com/cream.jpg"
+  ],
+  "video_urls": [
+    "https://example.com/original.mp4"
+  ],
+  "duration": 5,
+  "aspect_ratio": "16:9"
+}
+```
+
+### Example Payload (Video Extension)
+
+```json
+{
+  "model": "seedance-2.0-reference-to-video",
+  "prompt": "The arched window in video 1 opens, entering an art gallery interior, then continue with video 2, then the camera enters the painting, continue with video 3",
+  "video_urls": [
+    "https://example.com/part1.mp4",
+    "https://example.com/part2.mp4",
+    "https://example.com/part3.mp4"
+  ],
+  "duration": 8,
+  "aspect_ratio": "16:9",
+  "generate_audio": true
+}
+```
 
 ---
 
 ## Response Format
 
-### Generation Response (Task Created)
+### Generation Response
 ```json
 {
-  "id": "task-unified-1757156493-imcg5zqt",
-  "object": "image.generation.task",
-  "created": 1757156493,
-  "model": "gpt-image-2",
+  "id": "task-unified-1774857405-abc123",
+  "object": "video.generation.task",
+  "created": 1761313744,
+  "model": "seedance-2.0-text-to-video",
   "status": "pending",
   "progress": 0,
-  "type": "image",
+  "type": "video",
   "task_info": {
     "can_cancel": true,
-    "estimated_time": 100
+    "estimated_time": 165,
+    "video_duration": 8
   },
   "usage": {
-    "billing_rule": "per_call",
-    "credits_reserved": 2.5,
+    "billing_rule": "per_second",
+    "credits_reserved": 50,
     "user_group": "default"
   }
 }
@@ -160,79 +284,108 @@ Text input tokens scale linearly with `n` (count).
 ### Status Response (Completed)
 ```json
 {
-  "id": "task-unified-1757156493-imcg5zqt",
+  "id": "task-unified-1774857405-abc123",
   "status": "completed",
   "progress": 100,
-  "results": ["https://cdn.example.com/image1.png"]
-}
-```
-
-### Status Response (Multiple Images)
-```json
-{
-  "id": "task-unified-1757156493-imcg5zqt",
-  "status": "completed",
-  "progress": 100,
-  "results": [
-    "https://cdn.example.com/image1.png",
-    "https://cdn.example.com/image2.png",
-    "https://cdn.example.com/image3.png"
-  ]
+  "results": ["https://cdn.example.com/video.mp4"]
 }
 ```
 
 ## Task Status Values
 
-| Status | Description | Action |
-|--------|-------------|--------|
+| Status | Description | Action Required |
+|--------|-------------|-----------------|
 | `pending` | Task queued | Continue polling |
 | `processing` | Generation in progress | Continue polling |
-| `completed` | Image(s) ready | Retrieve URLs from results |
+| `completed` | Video ready | Retrieve video URL from results |
 | `failed` | Generation failed | Check error field |
 
 ## Error Codes
 
+### HTTP Status Codes
+
 | Code | Meaning | Common Causes | Solutions |
 |------|---------|---------------|-----------|
 | `200` | Success | — | Process response |
-| `400` | Bad Request | Invalid params, content blocked, file too large | Check parameters |
+| `400` | Bad Request | Invalid parameters, content blocked, file too large | Check parameters and content |
 | `401` | Unauthorized | Invalid or missing API key | Verify EVOLINK_API_KEY |
 | `402` | Payment Required | Insufficient balance | Add credits at dashboard |
-| `403` | Access Denied | Token lacks model access | Check API key permissions |
+| `403` | Access Denied | Token does not have model access | Check API key permissions |
 | `429` | Rate Limited | Too many requests | Wait and retry |
 | `500` | Internal Error | Server error | Retry later |
+
+### Common Error Messages
+
+#### Content Blocking (400)
+- **Trigger**: Realistic human faces, inappropriate content
+- **Message**: Contains "face" keywords
+- **Solution**: Modify prompt to avoid restricted content
+
+#### File Size — Images (400)
+- **Trigger**: Images >30MB
+- **Message**: Contains "file" and "large" or "size exceed"
+- **Solution**: Compress images before upload
+
+#### File Size — Videos (400)
+- **Trigger**: Videos >50MB or total duration >15 seconds
+- **Message**: Contains "video" and "large" or "size"
+- **Solution**: Compress videos; ensure total video duration ≤15s
+
+#### Invalid Key (401)
+- **Message**: "Invalid API key" or similar
+- **Solution**: Check key at https://evolink.ai/dashboard
+
+#### Insufficient Balance (402)
+- **Message**: "Insufficient balance" or similar
+- **Solution**: Add credits at https://evolink.ai/dashboard
 
 ## Polling Strategy
 
 ### Recommended Pattern
-1. **Fast polling**: Every 3 seconds for first 20 seconds
-2. **Slower polling**: Every 8 seconds after 20 seconds
+1. **Frequent polling**: Every 5 seconds for first 30 seconds
+2. **Slower polling**: Every 10 seconds after 30 seconds
 3. **Timeout**: Stop after 5 minutes with warning
 
 ### Typical Generation Times
-- **1K, low quality**: 5-15 seconds
-- **1K, medium quality**: 10-30 seconds
-- **2K, high quality**: 20-60 seconds
-- **4K, high quality**: 30-90 seconds
-- **Batch (n=4+)**: 30-120 seconds
+- **4-5 seconds, 480p**: 20-45 seconds
+- **5-8 seconds, 720p**: 30-90 seconds
+- **10-15 seconds, 720p**: 60-180 seconds
+
+### Timeout Handling
+After 5 minutes, inform user that generation may still be processing and suggest checking back later.
+
+## Rate Limits
+
+- **Generation requests**: Varies by plan
+- **Status queries**: Higher limit, safe to poll frequently
+- **Concurrent tasks**: Varies by plan
+
+Contact support for specific rate limit details for your account.
 
 ## Output URLs
 
 - **Validity**: 24 hours from generation
-- **Format**: PNG/JPEG image files
+- **Format**: MP4 video files
 - **CDN delivery**: High-speed download
-- **Save promptly**: URLs expire after 24 hours
+- **Audio**: Synchronized audio included by default (voice, sound effects, background music)
 
 ## Best Practices
 
 ### Prompt Writing
 - Be specific and descriptive
-- Include style, mood, lighting details
-- Max 32,000 characters but concise prompts often work better
-- For editing: clearly describe what to add/change/remove
+- Include visual details (colors, lighting, movement)
+- Avoid realistic human faces
+- Use cinematic language for better results
+- For reference-to-video: use numbered references ("image 1", "video 2", "audio 1") to specify how each input should be used
 
-### Cost Optimization
-- Use `low` quality for drafts and iterations
-- Use `1K` resolution for testing, scale up for finals
-- Batch with `n` to explore variations efficiently
-- Use ratio format + resolution instead of pixel format for convenience
+### Performance Optimization
+- Start with 480p for testing
+- Use shorter durations for faster generation
+- Provide clear, high-quality reference media
+- Batch similar requests to optimize costs
+
+### Error Resilience
+- Always handle all error codes
+- Provide user-friendly error messages with action links
+- Implement exponential backoff for rate limits
+- Set reasonable timeouts for polling

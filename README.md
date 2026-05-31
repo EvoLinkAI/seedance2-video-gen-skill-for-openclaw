@@ -1,14 +1,14 @@
-# GPT Image 2 Gen Skill for OpenClaw
+# Seedance 2 Video Gen Skill for OpenClaw
 
 <p align="center">
-  <strong>AI image generation with GPT Image 2 — install in one command, start creating in seconds.</strong>
+  <strong>Seedance 2.0 AI video generation for OpenClaw, Claude Code, OpenCode, and Cursor — install in one command.</strong>
 </p>
 
 <p align="center">
-  <a href="#gpt-image-2-generation">GPT Image 2</a> •
+  <a href="#seedance-video-generation">Seedance 2.0</a> •
   <a href="#installation">Install</a> •
   <a href="#getting-an-api-key">API Key</a> •
-  <a href="https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen-skill-for-openclaw">EvoLink</a>
+  <a href="https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw">EvoLink</a>
 </p>
 
 <p align="center">
@@ -19,17 +19,23 @@
 
 ---
 
-> **AI Agent?** Skip the README — go straight to [**llms-install.md**](llms-install.md) for step-by-step installation instructions designed for you.
-
----
-
 ## What is This?
 
-An [OpenClaw](https://github.com/openclaw/openclaw) / [Claude Code](https://github.com/anthropics/claude-code) / [OpenCode](https://github.com/opencode-ai/opencode) skill powered by [EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen). Install the skill and your AI agent gains the ability to generate and edit images using GPT Image 2.
+An [OpenClaw](https://github.com/openclaw/openclaw) / [Claude Code](https://github.com/anthropics/claude-code) / [OpenCode](https://github.com/opencode-ai/opencode) skill powered by [EvoLink](https://evolink.ai?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw). Install the skill and your AI agent gains Seedance 2.0 video generation with three core workflows:
 
 | Skill | Description | Model |
 |-------|-------------|-------|
-| **GPT Image 2 Gen** | Text-to-image, image editing, batch generation | GPT Image 2 (OpenAI) |
+| **Seedance 2 Video Gen** | Text-to-video, image-to-video, reference-to-video, auto audio | Seedance 2.0 (ByteDance) |
+
+### What It Can Do
+
+- **Text-to-video** — describe a scene and generate a video
+- **Image-to-video** — animate from 1–2 reference images
+- **Reference-to-video** — combine images, video clips, and audio for remix, editing, or extension
+- **Auto audio** — generate voice, sound effects, and background music
+- **Flexible output** — 4–15 seconds, 480p/720p, multiple aspect ratios
+
+📚 Full guide: [awesome-seedance-2-guide](https://github.com/EvoLinkAI/awesome-seedance-2-guide)
 
 ---
 
@@ -38,95 +44,41 @@ An [OpenClaw](https://github.com/openclaw/openclaw) / [Claude Code](https://gith
 ### Quick Install (OpenClaw)
 
 ```bash
-openclaw skills add https://github.com/EvoLinkAI/gpt-image-2-gen-skill-for-openclaw
+openclaw skills add https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw
 ```
 
 ### Install via npm (Recommended)
 
 ```bash
-npx evolink-gpt-image
+npx evolink-seedance
 ```
 
 Or non-interactive (for AI agents / CI):
 
 ```bash
-npx evolink-gpt-image -y
+npx evolink-seedance -y
 ```
 
 Install to a specific directory:
 
 ```bash
-npx evolink-gpt-image -y --path ~/.claude/skills
+npx evolink-seedance -y --path ~/.claude/skills
 ```
 
 ### Manual Install
 
 ```bash
-git clone https://github.com/EvoLinkAI/gpt-image-2-gen-skill-for-openclaw.git
-cd gpt-image-2-gen-skill-for-openclaw
+git clone https://github.com/EvoLinkAI/seedance2-video-gen-skill-for-openclaw.git
+cd seedance2-video-gen-skill-for-openclaw
 openclaw skills add .
 ```
-
-### Agent Auto-Install (Copy & Paste to Your Agent)
-
-Tell your AI agent the following prompt, and it will install the skill automatically:
-
-#### Claude Code
-
-```
-Install the GPT Image 2 generation skill by running:
-
-npx evolink-gpt-image@latest -y --path ~/.claude/skills
-
-After installation, set the API key:
-
-export EVOLINK_API_KEY=your_key_here
-
-Then read the skill file at ~/.claude/skills/gpt-image-2-gen/SKILL.md to learn how to use it.
-```
-
-#### OpenCode
-
-```
-Install the GPT Image 2 generation skill by running:
-
-npx evolink-gpt-image@latest -y --path ~/.opencode/skills
-
-After installation, set the API key:
-
-export EVOLINK_API_KEY=your_key_here
-
-Then read the skill file at ~/.opencode/skills/gpt-image-2-gen/SKILL.md to learn how to use it.
-```
-
-#### OpenClaw
-
-```
-Install the GPT Image 2 generation skill by running:
-
-npx evolink-gpt-image@latest -y
-
-The installer will auto-detect your OpenClaw skills directory. After installation, set the API key:
-
-export EVOLINK_API_KEY=your_key_here
-```
-
-#### One-Liner (Any Agent)
-
-For agents that support shell commands, this single command installs and verifies in one step:
-
-```bash
-EVOLINK_API_KEY=your_key_here npx evolink-gpt-image@latest -y --path ~/.claude/skills
-```
-
-Replace `~/.claude/skills` with `~/.opencode/skills` or your agent's skill directory.
 
 ---
 
 ## Getting an API Key
 
-1. Sign up at [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen-skill-for-openclaw)
-2. Go to Dashboard -> API Keys
+1. Sign up at [evolink.ai](https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw)
+2. Go to Dashboard → API Keys
 3. Create a new key
 4. Set it in your environment:
 
@@ -134,120 +86,67 @@ Replace `~/.claude/skills` with `~/.opencode/skills` or your agent's skill direc
 export EVOLINK_API_KEY=your_key_here
 ```
 
-Or tell your AI agent: *"Set my EvoLink API key to ..."* — it will handle the rest.
-
 ---
 
-## GPT Image 2 Generation
+## Seedance Video Generation
 
-Generate and edit AI images through natural conversation with your AI agent.
+Generate AI videos through natural conversation with your agent.
 
-### What It Can Do
+### Example Prompts
 
-- **Text-to-image** — Describe what you want, get an image
-- **Image editing** — Provide reference images (1-16) and describe edits
-- **Batch generation** — Generate up to 10 images per request
-- **Multiple sizes** — 15 ratio presets + custom pixel dimensions
-- **Resolution tiers** — 1K (~1MP), 2K (~4MP), 4K (~8.3MP)
-- **Quality levels** — Low (fast), Medium (balanced), High (best)
-- **Prompt power** — Up to 32,000 characters per prompt
+> "Generate a 5-second cinematic video of a cat playing piano"
 
-### Usage Examples
+> "Animate this product image into a short ad, 720p, 16:9"
 
-Just talk to your agent:
+> "Use this image and this clip as references, then extend the scene with ambient music"
 
-> "Generate an image of a sunset over the ocean"
+### Direct Script Usage
 
-> "Create a minimalist logo, 1024x1024, high quality"
+```bash
+# Text-to-video
+./scripts/seedance-gen.sh "A serene sunset over ocean waves" --duration 5 --quality 720p
 
-> "Edit this image — add a cat next to the person"
+# Image-to-video
+./scripts/seedance-gen.sh "The camera slowly pushes in" --image "https://example.com/scene.jpg" --duration 6 --quality 720p
 
-> "Generate 4 variations of a pixel art robot in 4K"
-
-The agent will guide you through any missing details and handle the generation.
+# Reference-to-video
+./scripts/seedance-gen.sh "Replace the product with image 1" --image "https://example.com/product.jpg" --video "https://example.com/original.mp4" --duration 5 --quality 720p
+```
 
 ### Requirements
 
 - `curl` and `jq` installed on your system
 - `EVOLINK_API_KEY` environment variable set
 
-### Script Reference
+### File Structure
 
-The skill includes `scripts/gpt-image-gen.sh` for direct command-line use:
-
-```bash
-# Text-to-image (basic)
-./scripts/gpt-image-gen.sh "A beautiful sunset over the ocean"
-
-# High quality 4K widescreen
-./scripts/gpt-image-gen.sh "Cinematic cityscape at dusk" --size 16:9 --resolution 4K --quality high
-
-# Custom pixel dimensions
-./scripts/gpt-image-gen.sh "Minimalist logo" --size 1024x1024
-
-# Image editing
-./scripts/gpt-image-gen.sh "Add a cat next to her" --image "https://example.com/photo.png"
-
-# Batch generation
-./scripts/gpt-image-gen.sh "Pixel art robot" --count 4 --quality high
-
-# Dry run (preview payload)
-./scripts/gpt-image-gen.sh "Test prompt" --dry-run
-```
-
-### API Parameters
-
-See [references/api-params.md](references/api-params.md) for complete API documentation.
-
----
-
-## File Structure
-
-```
+```text
 .
-├── README.md                    # This file
-├── SKILL.md                     # Skill definition (for AI agents)
-├── _meta.json                   # Skill metadata
+├── README.md
+├── README.zh-CN.md
+├── SKILL.md
+├── _meta.json
 ├── bin/
-│   └── cli.js                   # npm installer CLI
+│   └── cli.js
 ├── references/
-│   └── api-params.md            # Complete API parameter reference
+│   └── api-params.md
 └── scripts/
-    └── gpt-image-gen.sh         # Image generation script
+    └── seedance-gen.sh
 ```
 
 ---
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|---------|
-| `jq: command not found` | Install jq: `apt install jq` / `brew install jq` |
-| `401 Unauthorized` | Check your `EVOLINK_API_KEY` at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen) |
-| `402 Payment Required` | Add credits at [evolink.ai/dashboard](https://evolink.ai/dashboard?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen) |
-| `Content blocked` | Prompt flagged by moderation — modify your description |
-| Image too large | Reference images must be <=50MB each |
-| Generation timeout | Images can take 5-90s. Try lower quality/resolution first. |
-
----
-
-## Compatibility
-
-| Agent | Install Method |
-|-------|---------------|
-| **OpenClaw** | `openclaw skills add <repo>` or `npx evolink-gpt-image` |
-| **Claude Code** | `npx evolink-gpt-image -y --path ~/.claude/skills` |
-| **OpenCode** | `npx evolink-gpt-image -y --path ~/.opencode/skills` |
-| **Cursor** | `npx evolink-gpt-image -y --path <your-skills-dir>` |
-
----
-
-## License
-
-MIT
+| Issue | What to check |
+|------|---------------|
+| `401 Unauthorized` | Verify `EVOLINK_API_KEY` in your shell |
+| `402 Payment Required` | Add credits in the EvoLink dashboard |
+| No output file | Check the returned video URL and task status |
+| Bad install path | Re-run with `--path <skills-dir>` |
 
 ---
 
 <p align="center">
-  Powered by <a href="https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=gpt-image-2-gen-skill-for-openclaw"><strong>EvoLink</strong></a> — Unified AI API Gateway
+  Powered by <a href="https://evolink.ai/signup?utm_source=github&utm_medium=readme&utm_campaign=seedance2-video-gen-skill-for-openclaw"><strong>EvoLink</strong></a> — Unified AI API Gateway
 </p>
